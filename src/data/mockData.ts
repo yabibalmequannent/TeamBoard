@@ -406,3 +406,5 @@ export async function fetchMembers(): Promise<Member[]> {
   await new Promise((resolve) => setTimeout(resolve, 200));
   return members;
 }
+
+// Member assignments

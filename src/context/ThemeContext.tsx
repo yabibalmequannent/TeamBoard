@@ -39,3 +39,5 @@ export function useTheme(): ThemeContextType {
   }
   return context;
 }
+
+// Dark mode support

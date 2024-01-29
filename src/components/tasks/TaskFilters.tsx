@@ -76,3 +76,5 @@ export default function TaskFilters({
     </div>
   );
 }
+
+// Accessibility

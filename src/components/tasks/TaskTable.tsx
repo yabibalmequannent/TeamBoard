@@ -86,3 +86,5 @@ export default function TaskTable({ tasks, loading }: TaskTableProps) {
     </div>
   );
 }
+
+// Keyboard navigation

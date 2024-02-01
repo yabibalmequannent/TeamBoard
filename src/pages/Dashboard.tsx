@@ -39,3 +39,5 @@ export default function Dashboard() {
     </div>
   );
 }
+
+// Empty state handling

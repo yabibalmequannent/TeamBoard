@@ -12,7 +12,7 @@ export default function TaskTable({ tasks, loading }: TaskTableProps) {
   const {
     filter,
     filteredTasks,
-    selectedIds,
+    selectedIndexes,
     setSearch,
     setStatus,
     setSortBy,
@@ -25,7 +25,7 @@ export default function TaskTable({ tasks, loading }: TaskTableProps) {
     return <div className="loading" role="status">Loading tasks...</div>;
   }
 
-  const allSelected = filteredTasks.length > 0 && selectedIds.size === filteredTasks.length;
+  const allSelected = filteredTasks.length > 0 && selectedIndexes.length === filteredTasks.length;
 
   return (
     <div className="task-table-container">
@@ -40,8 +40,8 @@ export default function TaskTable({ tasks, loading }: TaskTableProps) {
         onToggleSortOrder={toggleSortOrder}
       />
       <div className="selection-info" aria-live="polite">
-        {selectedIds.size > 0 && (
-          <span>{selectedIds.size} task{selectedIds.size !== 1 ? 's' : ''} selected</span>
+        {selectedIndexes.length > 0 && (
+          <span>{selectedIndexes.length} task{selectedIndexes.length !== 1 ? 's' : ''} selected</span>
         )}
       </div>
       <table className="task-table" role="grid" aria-label="Task list">
@@ -72,11 +72,12 @@ export default function TaskTable({ tasks, loading }: TaskTableProps) {
               <td colSpan={6} className="empty-state">No tasks match your filters</td>
             </tr>
           ) : (
-            filteredTasks.map((task) => (
+            filteredTasks.map((task, index) => (
               <TaskRow
                 key={task.id}
                 task={task}
-                isSelected={selectedIds.has(task.id)}
+                index={index}
+                isSelected={selectedIndexes.includes(index)}
                 onSelect={toggleSelect}
               />
             ))
@@ -86,5 +87,3 @@ export default function TaskTable({ tasks, loading }: TaskTableProps) {
     </div>
   );
 }
-
-// Keyboard navigation

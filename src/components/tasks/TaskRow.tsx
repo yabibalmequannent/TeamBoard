@@ -5,8 +5,9 @@ import { members } from '../../data/mockData';
 
 interface TaskRowProps {
   task: Task;
+  index: number;
   isSelected: boolean;
-  onSelect: (taskId: string) => void;
+  onSelect: (index: number) => void;
 }
 
 const statusVariant: Record<string, 'success' | 'warning' | 'info'> = {
@@ -27,7 +28,7 @@ const priorityVariant: Record<string, 'danger' | 'warning' | 'default'> = {
   low: 'default',
 };
 
-export default function TaskRow({ task, isSelected, onSelect }: TaskRowProps) {
+export default function TaskRow({ task, index, isSelected, onSelect }: TaskRowProps) {
   const assignee = members.find((m) => m.id === task.assigneeId);
 
   return (
@@ -35,7 +36,7 @@ export default function TaskRow({ task, isSelected, onSelect }: TaskRowProps) {
       <td>
         <Checkbox
           checked={isSelected}
-          onChange={() => onSelect(task.id)}
+          onChange={() => onSelect(index)}
           id={`select-task-${task.id}`}
           label={`Select ${task.title}`}
         />

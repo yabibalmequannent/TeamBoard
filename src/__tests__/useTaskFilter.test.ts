@@ -71,24 +71,23 @@ describe('useTaskFilter', () => {
     expect(titles).toEqual(sorted);
   });
 
-  it('selects and deselects tasks by id', () => {
+  it('selects and deselects tasks by index', () => {
     const { result } = renderHook(() => useTaskFilter({ tasks }));
 
     act(() => {
-      result.current.toggleSelect(tasks[0].id);
+      result.current.toggleSelect(0);
     });
-    expect(result.current.selectedIds.has(tasks[0].id)).toBe(true);
+    expect(result.current.selectedIndexes).toEqual([0]);
 
     act(() => {
-      result.current.toggleSelect(tasks[1].id);
+      result.current.toggleSelect(1);
     });
-    expect(result.current.selectedIds.size).toBe(2);
+    expect(result.current.selectedIndexes).toEqual([0, 1]);
 
     act(() => {
-      result.current.toggleSelect(tasks[0].id);
+      result.current.toggleSelect(0);
     });
-    expect(result.current.selectedIds.size).toBe(1);
-    expect(result.current.selectedIds.has(tasks[1].id)).toBe(true);
+    expect(result.current.selectedIndexes).toEqual([1]);
   });
 
   it('select all selects all filtered tasks', () => {
@@ -98,39 +97,41 @@ describe('useTaskFilter', () => {
       result.current.toggleSelectAll();
     });
 
-    expect(result.current.selectedIds.size).toBe(result.current.filteredTasks.length);
+    expect(result.current.selectedIndexes.length).toBe(result.current.filteredTasks.length);
   });
 
   it('clears selection', () => {
     const { result } = renderHook(() => useTaskFilter({ tasks }));
 
     act(() => {
-      result.current.toggleSelect(tasks[0].id);
-      result.current.toggleSelect(tasks[1].id);
+      result.current.toggleSelect(0);
+      result.current.toggleSelect(1);
     });
 
     act(() => {
       result.current.clearSelection();
     });
 
-    expect(result.current.selectedIds.size).toBe(0);
+    expect(result.current.selectedIndexes).toEqual([]);
   });
 
-  it('selection by ID survives filter changes', () => {
+  it('BUG: selection indexes shift when filter changes', () => {
     const { result } = renderHook(() => useTaskFilter({ tasks }));
 
     act(() => {
-      result.current.toggleSelect(tasks[0].id);
-      result.current.toggleSelect(tasks[1].id);
+      result.current.toggleSelect(0);
+      result.current.toggleSelect(1);
     });
 
-    expect(result.current.selectedIds.size).toBe(2);
+    expect(result.current.selectedIndexes).toEqual([0, 1]);
 
     act(() => {
       result.current.setStatus('in-progress');
     });
 
-    expect(result.current.selectedIds.has(tasks[0].id)).toBe(true);
-    expect(result.current.selectedIds.has(tasks[1].id)).toBe(true);
+    const inProgressTasks = tasks.filter((t) => t.status === 'in-progress');
+    expect(result.current.filteredTasks.length).toBe(inProgressTasks.length);
+
+    expect(result.current.selectedIndexes).toEqual([0, 1]);
   });
 });

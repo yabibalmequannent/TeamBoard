@@ -20,7 +20,8 @@ export function useTaskFilter({ tasks }: UseTaskFilterOptions) {
     sortOrder: 'asc',
   });
 
-  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+  // BUG: Using indexes instead of task IDs for selection
+  const [selectedIndexes, setSelectedIndexes] = useState<number[]>([]);
 
   const setSearch = (search: string) => {
     setFilter((prev) => ({ ...prev, search }));
@@ -87,33 +88,27 @@ export function useTaskFilter({ tasks }: UseTaskFilterOptions) {
   }, [tasks, filter]);
 
   const toggleSelectAll = () => {
-    if (selectedIds.size === filteredTasks.length) {
-      setSelectedIds(new Set());
+    if (selectedIndexes.length === filteredTasks.length) {
+      setSelectedIndexes([]);
     } else {
-      setSelectedIds(new Set(filteredTasks.map((t) => t.id)));
+      setSelectedIndexes(filteredTasks.map((_, index) => index));
     }
   };
 
-  const toggleSelect = (taskId: string) => {
-    setSelectedIds((prev) => {
-      const next = new Set(prev);
-      if (next.has(taskId)) {
-        next.delete(taskId);
-      } else {
-        next.add(taskId);
-      }
-      return next;
-    });
+  const toggleSelect = (index: number) => {
+    setSelectedIndexes((prev) =>
+      prev.includes(index) ? prev.filter((i) => i !== index) : [...prev, index]
+    );
   };
 
   const clearSelection = () => {
-    setSelectedIds(new Set());
+    setSelectedIndexes([]);
   };
 
   return {
     filter,
     filteredTasks,
-    selectedIds,
+    selectedIndexes,
     setSearch,
     setStatus,
     setSortBy,
